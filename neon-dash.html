@@ -378,15 +378,16 @@
 
         document.getElementById('highScoreDisplay').textContent = highScore;
 
-        // Player
+        // Player - Shinnosuke Nohara style
         const player = {
             x: 120,
             y: 0,
-            width: 40,
-            height: 50,
+            width: 45,
+            height: 55,
             vy: 0,
             grounded: true,
-            trail: []
+            trail: [],
+            runFrame: 0
         };
 
         // Obstacles & coins
@@ -579,52 +580,163 @@
         }
 
         function drawPlayer() {
-            // Trail
+            // Trail effect
             player.trail.forEach((pos, i) => {
-                const alpha = (i / player.trail.length) * 0.3;
-                ctx.fillStyle = `rgba(0, 245, 255, ${alpha})`;
-                ctx.fillRect(pos.x, pos.y, player.width, player.height);
+                const alpha = (i / player.trail.length) * 0.25;
+                ctx.fillStyle = `rgba(255, 150, 150, ${alpha})`;
+                ctx.beginPath();
+                ctx.ellipse(pos.x + player.width/2, pos.y + player.height/2, 
+                    player.width/2, player.height/2, 0, 0, Math.PI * 2);
+                ctx.fill();
             });
             
-            if (player.trail.length > 8) {
+            if (player.trail.length > 6) {
                 player.trail.shift();
             }
 
-            // Body
-            const gradient = ctx.createLinearGradient(player.x, player.y, player.x + player.width, player.y + player.height);
-            gradient.addColorStop(0, '#00f5ff');
-            gradient.addColorStop(1, '#b829dd');
+            const x = player.x;
+            const y = player.y;
+            const w = player.width;
+            const h = player.height;
             
-            ctx.fillStyle = gradient;
-            ctx.shadowBlur = 20;
-            ctx.shadowColor = '#00f5ff';
+            player.runFrame += 0.15;
+            const legOffset = player.grounded ? Math.sin(player.runFrame * 2) * 3 : 5;
+
+            // Shadow
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.3)';
+            ctx.beginPath();
+            ctx.ellipse(x + w/2, y + h + 3, w/2, 5, 0, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Legs (blue shorts legs)
+            ctx.fillStyle = '#5B8FB9';
+            ctx.fillRect(x + 8, y + h - 18, 10, 18 + legOffset);
+            ctx.fillRect(x + w - 18, y + h - 18, 10, 18 - legOffset);
+
+            // Shoes
+            ctx.fillStyle = '#FFE066';
+            ctx.beginPath();
+            ctx.ellipse(x + 13, y + h + 3 + legOffset, 8, 5, 0, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.beginPath();
+            ctx.ellipse(x + w - 13, y + h + 3 - legOffset, 8, 5, 0, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Body (red shirt with white dots - signature pajamas)
+            ctx.fillStyle = '#E63946';
+            ctx.beginPath();
+            ctx.roundRect(x + 5, y + 25, w - 10, 28, 5);
+            ctx.fill();
+
+            // White polka dots on shirt
+            ctx.fillStyle = '#FFFFFF';
+            const dots = [[10, 8], [20, 12], [12, 20], [22, 6]];
+            dots.forEach(([dx, dy]) => {
+                ctx.beginPath();
+                ctx.arc(x + 5 + dx, y + 25 + dy, 2, 0, Math.PI * 2);
+                ctx.fill();
+            });
+
+            // Arms
+            ctx.fillStyle = '#FFCBA4';
+            const armWave = player.grounded ? Math.sin(player.runFrame * 2) * 2 : -3;
             
             ctx.beginPath();
-            ctx.moveTo(player.x + 5, player.y);
-            ctx.lineTo(player.x + player.width - 5, player.y);
-            ctx.lineTo(player.x + player.width, player.y + 10);
-            ctx.lineTo(player.x + player.width, player.y + player.height - 5);
-            ctx.lineTo(player.x + player.width - 5, player.y + player.height);
-            ctx.lineTo(player.x + 5, player.y + player.height);
-            ctx.lineTo(player.x, player.y + player.height - 5);
-            ctx.lineTo(player.x, player.y + 10);
+            ctx.ellipse(x - 2, y + 35 + armWave, 6, 8, -0.3, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.beginPath();
+            ctx.ellipse(x + w + 2, y + 35 - armWave, 6, 8, 0.3, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Head (nude/pink face color)
+            ctx.fillStyle = '#FFCBA4';
+            ctx.beginPath();
+            ctx.ellipse(x + w/2, y + 15, 18, 16, 0, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Ears
+            ctx.fillStyle = '#FFCBA4';
+            ctx.beginPath();
+            ctx.ellipse(x + 3, y + 15, 5, 7, 0, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.beginPath();
+            ctx.ellipse(x + w - 3, y + 15, 5, 7, 0, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Hair (black spiky hair)
+            ctx.fillStyle = '#1A1A2E';
+            ctx.beginPath();
+            ctx.moveTo(x + 8, y + 8);
+            ctx.lineTo(x + 12, y - 3);
+            ctx.lineTo(x + 16, y + 6);
+            ctx.lineTo(x + 20, y - 5);
+            ctx.lineTo(x + 23, y + 4);
+            ctx.lineTo(x + 27, y - 2);
+            ctx.lineTo(x + w - 8, y + 8);
             ctx.closePath();
             ctx.fill();
-            
-            // Eye
-            ctx.fillStyle = '#fff';
-            ctx.shadowBlur = 10;
-            ctx.shadowColor = '#fff';
+
+            // Eyes (big anime eyes)
+            ctx.fillStyle = '#FFFFFF';
             ctx.beginPath();
-            ctx.arc(player.x + player.width - 12, player.y + 18, 5, 0, Math.PI * 2);
+            ctx.ellipse(x + 15, y + 14, 6, 7, 0, 0, Math.PI * 2);
             ctx.fill();
-            
-            ctx.fillStyle = '#0a0a12';
             ctx.beginPath();
-            ctx.arc(player.x + player.width - 11, player.y + 18, 2, 0, Math.PI * 2);
+            ctx.ellipse(x + w - 15, y + 14, 6, 7, 0, 0, Math.PI * 2);
             ctx.fill();
-            
-            ctx.shadowBlur = 0;
+
+            // Pupils (small, looking forward)
+            ctx.fillStyle = '#1A1A2E';
+            ctx.beginPath();
+            ctx.ellipse(x + 16, y + 15, 3, 4, 0, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.beginPath();
+            ctx.ellipse(x + w - 14, y + 15, 3, 4, 0, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Eye highlights
+            ctx.fillStyle = '#FFFFFF';
+            ctx.beginPath();
+            ctx.arc(x + 14, y + 12, 1.5, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.beginPath();
+            ctx.arc(x + w - 16, y + 12, 1.5, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Eyebrows
+            ctx.strokeStyle = '#1A1A2E';
+            ctx.lineWidth = 1.5;
+            ctx.beginPath();
+            ctx.moveTo(x + 9, y + 7);
+            ctx.quadraticCurveTo(x + 15, y + 5, x + 21, y + 8);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.moveTo(x + w - 21, y + 8);
+            ctx.quadraticCurveTo(x + w - 15, y + 5, x + w - 9, y + 7);
+            ctx.stroke();
+
+            // Nose
+            ctx.fillStyle = '#E8A87C';
+            ctx.beginPath();
+            ctx.arc(x + w/2, y + 18, 2, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Mouth (smiling)
+            ctx.strokeStyle = '#CC7060';
+            ctx.lineWidth = 2;
+            ctx.lineCap = 'round';
+            ctx.beginPath();
+            ctx.arc(x + w/2, y + 22, 6, 0.2, Math.PI - 0.2);
+            ctx.stroke();
+
+            // Cheeks (blush)
+            ctx.fillStyle = 'rgba(255, 150, 150, 0.4)';
+            ctx.beginPath();
+            ctx.ellipse(x + 5, y + 18, 4, 3, 0, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.beginPath();
+            ctx.ellipse(x + w - 5, y + 18, 4, 3, 0, 0, Math.PI * 2);
+            ctx.fill();
         }
 
         function drawObstacle(obs) {
