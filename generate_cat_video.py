@@ -2,10 +2,11 @@ import os
 import requests
 import time
 
-def generate_video(prompt, duration=7, resolution="1080p", model="doubao-seed-2-0-pro-260215"):
-    api_key = os.environ.get('VIDEO_API_KEY')
+def generate_video(prompt, duration=7, resolution="1080p", model="ep-20260511114916-8vh5d"):
+    api_key = os.environ.get('ARK_API_KEY')
     if not api_key:
-        print("❌ API Key 未配置")
+        print("❌ ARK_API_KEY 环境变量未配置")
+        print("请先运行: export ARK_API_KEY='你的API Key'")
         return None
     
     url = "https://ark.cn-beijing.volces.com/api/v3/contents/generations/tasks"
@@ -29,7 +30,7 @@ def generate_video(prompt, duration=7, resolution="1080p", model="doubao-seed-2-
     }
     
     print(f"🚀 开始生成视频...")
-    print(f"✅ 使用模型: {model}")
+    print(f"✅ 使用接入点: {model}")
     print(f"📝 提示词: {prompt}")
     print(f"⏱️ 时长: {duration}秒")
     print(f"📐 分辨率: {resolution}")
