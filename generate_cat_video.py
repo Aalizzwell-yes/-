@@ -2,7 +2,7 @@ import os
 import requests
 import time
 
-def generate_video(prompt, duration=7, resolution="1080p", model="doubao-seedance-2-0-260128"):
+def generate_video(prompt, duration=7, resolution="1080p", model="doubao-seed-2-0-pro-260215"):
     api_key = os.environ.get('VIDEO_API_KEY')
     if not api_key:
         print("❌ API Key 未配置")
@@ -33,7 +33,7 @@ def generate_video(prompt, duration=7, resolution="1080p", model="doubao-seedanc
     print(f"📝 提示词: {prompt}")
     print(f"⏱️ 时长: {duration}秒")
     print(f"📐 分辨率: {resolution}")
-    print(f"🔑 API Key: {api_key[:15]}...")
+    print(f"🔑 API Key: {api_key[:20]}...")
     
     try:
         response = requests.post(url, headers=headers, json=payload)
