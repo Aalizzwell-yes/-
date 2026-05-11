@@ -3,7 +3,7 @@ import requests
 import time
 
 def generate_video(prompt, duration=7, resolution="1080p", model="doubao-seedance-2-0-260128"):
-    api_key = os.environ.get('VOLC_ACCESS_KEY_ID')
+    api_key = os.environ.get('VIDEO_API_KEY')
     if not api_key:
         print("❌ API Key 未配置")
         return None
@@ -33,7 +33,7 @@ def generate_video(prompt, duration=7, resolution="1080p", model="doubao-seedanc
     print(f"📝 提示词: {prompt}")
     print(f"⏱️ 时长: {duration}秒")
     print(f"📐 分辨率: {resolution}")
-    print(f"🔑 API Key: {api_key[:10]}...")
+    print(f"🔑 API Key: {api_key[:15]}...")
     
     try:
         response = requests.post(url, headers=headers, json=payload)
