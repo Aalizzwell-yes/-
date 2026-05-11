@@ -2,7 +2,7 @@ import os
 import requests
 import time
 
-def generate_video(prompt, duration=7, resolution="1080p", model="doubao-seedance-1-0-pro-fast-251015"):
+def generate_video(prompt, duration=7, resolution="1080p", model="doubao-seedance-2-0-260128"):
     api_key = os.environ.get('VOLC_ACCESS_KEY_ID')
     if not api_key:
         print("❌ API Key 未配置")
@@ -15,14 +15,12 @@ def generate_video(prompt, duration=7, resolution="1080p", model="doubao-seedanc
         "Content-Type": "application/json"
     }
     
-    full_prompt = f"{prompt}"
-    
     payload = {
         "model": model,
         "content": [
             {
                 "type": "text",
-                "text": full_prompt
+                "text": prompt
             }
         ],
         "duration": duration,
@@ -36,7 +34,6 @@ def generate_video(prompt, duration=7, resolution="1080p", model="doubao-seedanc
     print(f"⏱️ 时长: {duration}秒")
     print(f"📐 分辨率: {resolution}")
     print(f"🔑 API Key: {api_key[:10]}...")
-    print(f"📤 请求体: {payload}")
     
     try:
         response = requests.post(url, headers=headers, json=payload)
@@ -79,7 +76,7 @@ def check_task_status(task_id, api_key):
         "Content-Type": "application/json"
     }
     
-    max_retries = 30
+    max_retries = 60
     for i in range(max_retries):
         try:
             response = requests.get(url, headers=headers)
@@ -102,7 +99,7 @@ def check_task_status(task_id, api_key):
                 return None
                 
             elif status in ['queued', 'running']:
-                time.sleep(10)
+                time.sleep(15)
                 continue
             else:
                 print(f"\n⚠️ 未知状态: {status}")
