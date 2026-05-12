@@ -2,9 +2,10 @@ import os
 
 class APIConfig:
     DOUBAO_LLM_ENDPOINT = "ep-20260511114916-8vh5d"
-    DOUBAO_API_KEY = os.environ.get('ARK_API_KEY')
     
-    KIMI_API_KEY = os.environ.get('KIMI_API_KEY', "sk-mOsNqxU6WTBriYzQbdU8KapaTEwjpCBjmkoptc3ppjiAxHSt")
+    # API密钥直接写在这里（简单直接持久化）
+    DOUBAO_API_KEY = "ark-e2c6507d-fac7-4e17-a3ca-a9180211e175-be364"
+    KIMI_API_KEY = "sk-mOsNqxU6WTBriYzQbdU8KapaTEwjpCBjmkoptc3ppjiAxHSt"
     
     DOUBAO_LLM_URL = "https://ark.cn-beijing.volces.com/api/v3/chat/completions"
     
