@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0, minimum-scale=1.0, shrink-to-fit=no, viewport-fit=cover">
+  <title>🐍 贪吃蛇 · Aalizzwell 特别版</title>
+  <style>
+    :root {
+      --bg: #0a0a14;
+      --console-bg: #1a1a2e;
+      --gold: #f0c060;
+      --danger: #e94560;
+      --accent: #4ecca3;
+      --panel: #16213e;
+    }
+    * { box-sizing: border-box; }
+    body {
+      background: var(--bg);
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+      touch-action: manipulation;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+      overflow-x: hidden;
+    }
+    .console {
+      background: linear-gradient(160deg, #232344 0%, #14142a 100%);
+      border-radius: 28px;
+      padding: 16px 16px 20px;
+      box-shadow: 0 30px 60px rgba(0,0,0,0.7), inset 0 1px 2px rgba(255,255,255,0.08);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      max-width: 460px;
+      width: 96%;
+      gap: 10px;
+    }
+    .title-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      width: 100%;
+      justify-content: center;
+    }
+    .title {
+      color: var(--gold);
+      font-weight: 900;
+      font-size: 1.1rem;
+      letter-spacing: 4px;
+      text-shadow: 0 0 18px rgba(240,192,96,0.5);
+      text-transform: uppercase;
+    }
+    .screen-bezel {
+      background: #0a0a18;
+      border-radius: 16px;
+      padding: 6px;
+      box-shadow: inset 0 0 20px rgba(0,0,0,0.9), 0 0 0 3px #2a2a48;
+      width: 100%;
+      display: flex;
+      justify-content: center;
+    }
+    canvas {
+      display: block;
+      border-radius: 12px;
+      width: 100%;
+      height: auto;
+      background: #061a06;
+      box-shadow: inset 0 0 40px rgba(0,0,0,0.7);
+    }
+    .info-panel {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+      padding: 0 4px;
+    }
+    .score-box {
+      background: var(--panel);
+      padding: 10px 18px;
+      border-radius: 30px;
+      font-weight: 700;
+      font-size: 0.9rem;
+      color: #f0e68c;
+      letter-spacing: 1px;
+    }
+    .status-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .status-led {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: var(--accent);
+      box-shadow: 0 0 14px var(--accent);
+      transition: 0.3s;
+    }
+    .status-led.off {
+      background: #444;
+      box-shadow: none;
+    }
+    .status-label {
+      color: #888;
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 2px;
+    }
+    .controls-area {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+      margin-top: 4px;
+    }
+    /* 摇杆 */
+    .joystick-container {
+      width: 110px;
+      height: 110px;
+      border-radius: 50%;
+      background: radial-gradient(circle, #2a2a44 0%, #1a1a30 100%);
+      box-shadow: inset 0 4px 12px rgba(0,0,0,0.6), 0 6px 16px rgba(0,0,0,0.5);
+      position: relative;
+      cursor: pointer;
+      touch-action: none;
+      flex-shrink: 0;
+    }
+    .joystick-thumb {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 40% 35%, #5a5a8a, #2a2a50);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.6);
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+      transition: box-shadow 0.1s;
+    }
+    .joystick-container.active .joystick-thumb {
+      box-shadow: 0 2px 6px rgba(0,0,0,0.8), 0 0 20px rgba(120,120,255,0.4);
+    }
+    .action-btns {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      align-items: center;
+    }
+    .cyl-btn {
+      border: none;
+      font-weight: 700;
+      font-size: 0.7rem;
+      padding: 10px 16px;
+      border-radius: 28px;
+      color: #fff;
+      cursor: pointer;
+      letter-spacing: 1.5px;
+      box-shadow: 0 5px 0 #0d0d20, 0 8px 16px rgba(0,0,0,0.5);
+      transition: 0.07s ease;
+      text-transform: uppercase;
+      touch-action: manipulation;
+      white-space: nowrap;
+    }
+    .cyl-btn:active {
+      transform: translateY(3px);
+      box-shadow: 0 2px 0 #0d0d20, 0 4px 8px rgba(0,0,0,0.5);
+    }
+    .start-btn { background: linear-gradient(180deg, #e94560, #b8304f); }
+    .restart-btn { background: linear-gradient(180deg, #3a5f8a, #1d3557); }
+    .invincible-btn { background: linear-gradient(180deg, #ffd700, #b8860b); color: #000; }
+    .invincible-btn.active { background: linear-gradient(180deg, #fff44f, #daa520); box-shadow: 0 5px 0 #8b7500, 0 8px 16px rgba(255,215,0,0.4); }
+    .speed-btn { background: linear-gradient(180deg, #00bfff, #0080ff); }
+    .speed-btn.active { background: linear-gradient(180deg, #33ccff, #0066cc); box-shadow: 0 5px 0 #004d99, 0 8px 16px rgba(0,191,255,0.4); }
+    .power-row {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="console">
+    <div class="title-row">
+      <span>🐍</span><span class="title">Aalizzwell</span><span>🤖</span>
+    </div>
+    <div class="screen-bezel">
+      <canvas id="gameCanvas" width="480" height="480"></canvas>
+    </div>
+    <div class="info-panel">
+      <span class="score-box" id="scoreDisplay">🍎 0</span>
+      <div class="status-row">
+        <span class="status-label" id="statusLabel">待机</span>
+        <div id="statusLed" class="status-led off"></div>
+      </div>
+    </div>
+    <div class="controls-area">
+      <div class="joystick-container" id="joystick">
+        <div class="joystick-thumb" id="joystickThumb"></div>
+      </div>
+      <div class="action-btns">
+        <button id="btnStart" class="cyl-btn start-btn">▶ 开始</button>
+        <button id="btnRestart" class="cyl-btn restart-btn">↺ 重来</button>
+        <div class="power-row">
+          <button id="btnInvincible" class="cyl-btn invincible-btn">🛡️ 无敌</button>
+          <button id="btnSpeed" class="cyl-btn speed-btn">⚡ 加速</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (function() {
+      const canvas = document.getElementById('gameCanvas');
+      const ctx = canvas.getContext('2d');
+      const scoreDisplay = document.getElementById('scoreDisplay');
+      const statusLed = document.getElementById('statusLed');
+      const statusLabel = document.getElementById('statusLabel');
+      const btnStart = document.getElementById('btnStart');
+      const btnRestart = document.getElementById('btnRestart');
+      const btnInvincible = document.getElementById('btnInvincible');
+      const btnSpeed = document.getElementById('btnSpeed');
+      const joystickEl = document.getElementById('joystick');
+      const joystickThumb = document.getElementById('joystickThumb');
+
+      // 游戏常量
+      const GRID_SIZE = 16;
+      const TILE_COUNT = 30;    // 30x30 网格
+      const BASE_SPEED = 90;    // 普通速度 (ms/格)
+      const BOOST_SPEED = 30;   // 加速速度 (ms/格)
+      const AI_SPEED = 150;
+      const MONSTER_MOVE = 1000;
+
+      // 安全取模函数 (确保坐标始终在 0 ~ TILE_COUNT-1)
+      const wrap = (val) => {
+        if (isNaN(val) || !isFinite(val)) return 0;
+        let res = val % TILE_COUNT;
+        if (res < 0) res += TILE_COUNT;
+        return res;
+      };
+
+      // 游戏状态
+      let snake = [];
+      let dx = 1, dy = 0;
+      let food = { x: 15, y: 15 };
+      let score = 0;
+      let gameRunning = false;
+      let gameLoopId = null;
+      let monsters = [];
+      let aiSnakes = [];
+      let particles = [];
+      let lastSnakeMove = 0, lastMonsterMove = 0, lastAiMove = 0;
+      let invincible = false;    // 无敌状态
+      let speedBoost = false;    // 加速状态
+
+      // 摇杆状态
+      let joystickActive = false;
+      let joystickDir = { x: 0, y: 0 };
+
+      // 音频
+      let audioCtx = null;
+      function ensureAudio() {
+        if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+      }
+      function playSound(freq, type, dur, vol) {
+        if (!audioCtx) return;
+        try {
+          const osc = audioCtx.createOscillator();
+          const gain = audioCtx.createGain();
+          osc.type = type; osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+          gain.gain.setValueAtTime(vol, audioCtx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + dur);
+          osc.connect(gain); gain.connect(audioCtx.destination);
+          osc.start(); osc.stop(audioCtx.currentTime + dur);
+        } catch(e) { /* 忽略音频错误 */ }
+      }
+
+      // 重置游戏
+      function fullReset() {
+        snake = [{x:15,y:15},{x:14,y:15},{x:13,y:15},{x:12,y:15},{x:11,y:15}];
+        dx = 1; dy = 0; score = 0; particles = [];
+        invincible = false; speedBoost = false;
+        updatePowerButtons();
+        initAI(); initMonsters(); generateFood(); updateUI();
+      }
+
+      function initMonsters() {
+        monsters = [];
+        const occupied = new Set([...snake.map(s=>`${s.x},${s.y}`), `${food.x},${food.y}`]);
+        for (let i=0; i<4; i++) {
+          let pos, tries=0;
+          do { pos = { x: Math.floor(Math.random()*TILE_COUNT), y: Math.floor(Math.random()*TILE_COUNT) }; tries++; }
+          while (occupied.has(`${pos.x},${pos.y}`) && tries<200);
+          monsters.push(pos); occupied.add(`${pos.x},${pos.y}`);
+        }
+      }
+      function initAI() {
+        aiSnakes = [
+          { body: [{x:10,y:20},{x:9,y:20},{x:8,y:20}], dx:1, dy:0, hue:200, speed:AI_SPEED, alive:true, respawn:0 },
+          { body: [{x:20,y:10},{x:20,y:11},{x:20,y:12}], dx:0, dy:-1, hue:30, speed:AI_SPEED+20, alive:true, respawn:0 }
+        ];
+      }
+      function generateFood() {
+        const occupied = new Set([...snake.map(s=>`${s.x},${s.y}`), ...monsters.map(m=>`${m.x},${m.y}`)]);
+        aiSnakes.forEach(ai=> ai.alive && ai.body.forEach(s=> occupied.add(`${s.x},${s.y}`)));
+        let f, tries=0;
+        do { f = { x: Math.floor(Math.random()*TILE_COUNT), y: Math.floor(Math.random()*TILE_COUNT) }; tries++; }
+        while (occupied.has(`${f.x},${f.y}`) && tries<500);
+        food = f;
+      }
+
+      // 玩家移动 (穿墙 + 无敌检测) – 修复了边界卡顿问题
+      function moveSnake() {
+        if (!gameRunning) return;
+        const head = snake[0];
+        // 确保 head 有效
+        if (!head || isNaN(head.x) || isNaN(head.y)) {
+          fullReset(); gameRunning = true; return;
+        }
+        let nx = head.x + dx;
+        let ny = head.y + dy;
+        nx = wrap(nx);
+        ny = wrap(ny);
+        const newHead = { x: nx, y: ny };
+
+        // 碰撞检测 (如果非无敌)
+        if (!invincible) {
+          if (aiSnakes.some(ai=> ai.alive && ai.body.some(s=> s.x===nx && s.y===ny)) ||
+              monsters.some(m=> m.x===nx && m.y===ny)) {
+            gameOver();
+            return;
+          }
+        }
+
+        snake.unshift(newHead);
+
+        // 吃食物
+        if (nx === food.x && ny === food.y) {
+          score += 10;
+          spawnParticles(food.x*GRID_SIZE+GRID_SIZE/2, food.y*GRID_SIZE+GRID_SIZE/2, '#ff6b6b', 12);
+          playSound(700, 'sine', 0.08, 0.1);
+          generateFood();
+        } else {
+          snake.pop();
+        }
+
+        // 自身碰撞 (非无敌时死亡)
+        if (!invincible) {
+          const headKey = `${nx},${ny}`;
+          if (snake.slice(1).some(s=> `${s.x},${s.y}` === headKey)) {
+            gameOver();
+          }
+        }
+      }
+
+      // AI移动 (同样使用 wrap)
+      function moveAI(idx) {
+        const ai = aiSnakes[idx];
+        if (!ai.alive) { ai.respawn--; if (ai.respawn<=0) respawnAI(idx); return; }
+        const head = ai.body[0];
+        if (!head || isNaN(head.x) || isNaN(head.y)) { killAI(idx); return; }
+        const wx = food.x - head.x, wy = food.y - head.y;
+        const dirs = [{dx:1,dy:0},{dx:-1,dy:0},{dx:0,dy:1},{dx:0,dy:-1}];
+        dirs.sort((a,b)=> (Math.abs(wx-a.dx)+Math.abs(wy-a.dy)) - (Math.abs(wx-b.dx)+Math.abs(wy-b.dy)) );
+        const occupied = new Set([...snake.map(s=>`${s.x},${s.y}`), ...monsters.map(m=>`${m.x},${m.y}`)]);
+        aiSnakes.forEach((a,i2)=> i2!==idx && a.alive && a.body.forEach(s=> occupied.add(`${s.x},${s.y}`)));
+        for (let i=1; i<ai.body.length; i++) occupied.add(`${ai.body[i].x},${ai.body[i].y}`);
+        let chosen = null;
+        for (const d of dirs) {
+          let nx = wrap(head.x + d.dx);
+          let ny = wrap(head.y + d.dy);
+          if (!occupied.has(`${nx},${ny}`)) { chosen = d; break; }
+        }
+        if (!chosen) return;
+        ai.dx = chosen.dx; ai.dy = chosen.dy;
+        let nx2 = wrap(head.x + chosen.dx);
+        let ny2 = wrap(head.y + chosen.dy);
+        ai.body.unshift({x:nx2,y:ny2});
+        if (nx2===food.x && ny2===food.y) { generateFood(); playSound(500,'triangle',0.05,0.08); }
+        else ai.body.pop();
+        if (!invincible && snake.some(s=> s.x===nx2 && s.y===ny2)) killAI(idx);
+        if (monsters.some(m=> m.x===nx2 && m.y===ny2)) killAI(idx);
+      }
+      function killAI(idx) {
+        const ai = aiSnakes[idx]; ai.alive = false; ai.respawn = 50;
+        if (ai.body.length > 0) {
+          spawnParticles(ai.body[0].x*GRID_SIZE+GRID_SIZE/2, ai.body[0].y*GRID_SIZE+GRID_SIZE/2, '#ff4444', 10);
+        }
+        ai.body = [];
+      }
+      function respawnAI(idx) {
+        const ai = aiSnakes[idx];
+        const occupied = new Set([...snake.map(s=>`${s.x},${s.y}`), `${food.x},${food.y}`]);
+        monsters.forEach(m=> occupied.add(`${m.x},${m.y}`));
+        let sx,sy, tries=0;
+        do { sx = Math.floor(Math.random()*TILE_COUNT); sy = Math.floor(Math.random()*TILE_COUNT); tries++; }
+        while (occupied.has(`${sx},${sy}`) && tries<300);
+        ai.body = [{x:sx,y:sy},{x:sx-1,y:sy},{x:sx-2,y:sy}];
+        ai.dx=1; ai.dy=0; ai.alive=true; ai.respawn=0;
+      }
+
+      function gameOver() {
+        if (!gameRunning) return;
+        gameRunning = false;
+        playSound(120,'sawtooth',0.4,0.12);
+        ctx.fillStyle='rgba(0,0,0,0.7)'; ctx.fillRect(0,0,480,480);
+        ctx.font='bold 28px "Segoe UI"'; ctx.fillStyle='#e94560'; ctx.textAlign='center';
+        ctx.fillText('游戏结束',240,240);
+        updateUI();
+      }
+
+      function updateUI() {
+        scoreDisplay.textContent = `🍎 ${score}`;
+        statusLed.className = gameRunning ? 'status-led' : 'status-led off';
+        statusLabel.textContent = gameRunning ? '运行中' : '待机';
+      }
+
+      function updatePowerButtons() {
+        btnInvincible.textContent = invincible ? '🛡️ 无敌 ON' : '🛡️ 无敌';
+        btnInvincible.classList.toggle('active', invincible);
+        btnSpeed.textContent = speedBoost ? '⚡ 加速 ON' : '⚡ 加速';
+        btnSpeed.classList.toggle('active', speedBoost);
+      }
+
+      // 粒子系统
+      function spawnParticles(x,y,color,count) {
+        for (let i=0; i<count; i++) {
+          const a=Math.random()*Math.PI*2, sp=1+Math.random()*4;
+          particles.push({x,y,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp,life:1,decay:0.03,size:1+Math.random()*3,color});
+        }
+      }
+      function updateParticles() {
+        for (let i=particles.length-1; i>=0; i--) {
+          const p=particles[i]; p.x+=p.vx; p.y+=p.vy; p.life-=p.decay;
+          if (p.life<=0) particles.splice(i,1);
+        }
+      }
+
+      // 绘制部分 (保持不变)
+      function drawAll() {
+        ctx.clearRect(0,0,480,480);
+        drawBg(); drawFood();
+        aiSnakes.forEach(ai=> ai.alive && drawSnakeBody(ai.body, ai.hue, false));
+        drawSnakeBody(snake, 130, true);
+        drawMonsters();
+        drawParticles();
+        if (invincible) {
+          ctx.font = 'bold 14px "Segoe UI"';
+          ctx.fillStyle = '#ffd700';
+          ctx.shadowColor = '#ffd700';
+          ctx.shadowBlur = 8;
+          ctx.fillText('🛡️ 无敌模式', 10, 25);
+          ctx.shadowBlur = 0;
+        }
+        if (speedBoost) {
+          ctx.font = 'bold 14px "Segoe UI"';
+          ctx.fillStyle = '#00bfff';
+          ctx.shadowColor = '#00bfff';
+          ctx.shadowBlur = 8;
+          ctx.fillText('⚡ 加速中', 10, 50);
+          ctx.shadowBlur = 0;
+        }
+        updateUI();
+      }
+      function drawBg() {
+        const g=ctx.createRadialGradient(240,240,20,240,240,400);
+        g.addColorStop(0,'#0d3f0d'); g.addColorStop(1,'#020c02');
+        ctx.fillStyle=g; ctx.fillRect(0,0,480,480);
+      }
+      function drawSnakeBody(body, hue, isPlayer) {
+        if (!body || body.length<2) return;
+        ctx.save(); ctx.lineCap='round'; ctx.lineJoin='round';
+        const pts = body.map(s=> ({x:s.x*GRID_SIZE+GRID_SIZE/2, y:s.y*GRID_SIZE+GRID_SIZE/2}));
+        ctx.beginPath(); ctx.moveTo(pts[0].x+2, pts[0].y+2);
+        for (let i=1; i<pts.length; i++) {
+          const mx=(pts[i-1].x+pts[i].x)/2, my=(pts[i-1].y+pts[i].y)/2;
+          ctx.quadraticCurveTo(pts[i-1].x+2, pts[i-1].y+2, mx, my);
+        }
+        ctx.lineWidth=GRID_SIZE*2.2; ctx.strokeStyle='rgba(0,0,0,0.4)'; ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(pts[0].x, pts[0].y);
+        for (let i=1; i<pts.length; i++) {
+          const mx=(pts[i-1].x+pts[i].x)/2, my=(pts[i-1].y+pts[i].y)/2;
+          ctx.quadraticCurveTo(pts[i-1].x, pts[i-1].y, mx, my);
+        }
+        const grad = ctx.createLinearGradient(pts[0].x, pts[0].y, pts[pts.length-1].x, pts[pts.length-1].y);
+        grad.addColorStop(0, `hsl(${hue},75%,42%)`); grad.addColorStop(1, `hsl(${hue+15},65%,28%)`);
+        ctx.lineWidth=GRID_SIZE*2.2; ctx.strokeStyle=grad; ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(pts[0].x-1, pts[0].y-1);
+        for (let i=1; i<pts.length; i++) {
+          const mx=(pts[i-1].x+pts[i].x)/2, my=(pts[i-1].y+pts[i].y)/2;
+          ctx.quadraticCurveTo(pts[i-1].x-1, pts[i-1].y-1, mx, my);
+        }
+        ctx.lineWidth=GRID_SIZE*0.8; ctx.strokeStyle='rgba(255,255,255,0.2)'; ctx.stroke();
+        ctx.restore();
+        drawHead(pts[0], isPlayer, hue);
+        if (isPlayer) {
+          ctx.save();
+          ctx.font = `bold ${GRID_SIZE*0.85}px "Segoe UI"`;
+          ctx.fillStyle = '#fff';
+          ctx.shadowColor = '#000';
+          ctx.shadowBlur = 4;
+          ctx.textAlign = 'center';
+          ctx.fillText('Aalizzwell', pts[0].x, pts[0].y - GRID_SIZE*1.6);
+          ctx.restore();
+        }
+      }
+      function drawHead(p, isPlayer, hue) {
+        ctx.save();
+        ctx.fillStyle='#fff';
+        ctx.beginPath(); ctx.arc(p.x-5, p.y-3, 4, 0, Math.PI*2); ctx.fill();
+        ctx.beginPath(); ctx.arc(p.x+5, p.y-3, 4, 0, Math.PI*2); ctx.fill();
+        ctx.fillStyle='#111';
+        ctx.beginPath(); ctx.arc(p.x-5+dx*0.8, p.y-3+dy*0.8, 2.5, 0, Math.PI*2); ctx.fill();
+        ctx.beginPath(); ctx.arc(p.x+5+dx*0.8, p.y-3+dy*0.8, 2.5, 0, Math.PI*2); ctx.fill();
+        if (isPlayer) {
+          ctx.strokeStyle='#ff4444'; ctx.lineWidth=2.5; ctx.lineCap='round';
+          ctx.beginPath(); ctx.moveTo(p.x+dx*5, p.y+dy*5);
+          ctx.lineTo(p.x+dx*8+dy*3, p.y+dy*8+dx*3);
+          ctx.moveTo(p.x+dx*5, p.y+dy*5);
+          ctx.lineTo(p.x+dx*8-dy*3, p.y+dy*8-dx*3);
+          ctx.stroke();
+        } else {
+          ctx.strokeStyle=`hsl(${hue},80%,65%)`; ctx.lineWidth=2;
+          ctx.beginPath(); ctx.moveTo(p.x-3, p.y-GRID_SIZE*0.6);
+          ctx.lineTo(p.x-4, p.y-GRID_SIZE*1.8);
+          ctx.moveTo(p.x+3, p.y-GRID_SIZE*0.6);
+          ctx.lineTo(p.x+4, p.y-GRID_SIZE*1.8);
+          ctx.stroke();
+        }
+        ctx.restore();
+      }
+      function drawFood() {
+        const cx=food.x*GRID_SIZE+GRID_SIZE/2, cy=food.y*GRID_SIZE+GRID_SIZE/2, r=GRID_SIZE*0.9;
+        ctx.save(); ctx.shadowColor='#ff6b6b'; ctx.shadowBlur=12;
+        const g=ctx.createRadialGradient(cx-2,cy-2,r*0.2,cx,cy,r);
+        g.addColorStop(0,'#ff5252'); g.addColorStop(1,'#7b1f1f');
+        ctx.fillStyle=g; ctx.beginPath(); ctx.arc(cx,cy,r,0,Math.PI*2); ctx.fill();
+        ctx.shadowBlur=0; ctx.fillStyle='rgba(255,255,255,0.4)';
+        ctx.beginPath(); ctx.arc(cx-2,cy-3,r*0.35,0,Math.PI*2); ctx.fill();
+        ctx.fillStyle='#2ecc71';
+        ctx.beginPath(); ctx.ellipse(cx, cy-r-2, 2.5, 5, 0.15, 0, Math.PI*2); ctx.fill();
+        ctx.restore();
+      }
+      function drawMonsters() {
+        monsters.forEach(m=>{
+          const cx=m.x*GRID_SIZE+GRID_SIZE/2, cy=m.y*GRID_SIZE+GRID_SIZE/2, r=GRID_SIZE*0.85;
+          ctx.save(); ctx.shadowColor='#a855f7'; ctx.shadowBlur=10;
+          const g=ctx.createRadialGradient(cx,cy,r*0.1,cx,cy,r);
+          g.addColorStop(0,'#d47fff'); g.addColorStop(1,'#3d0066');
+          ctx.fillStyle=g; ctx.beginPath(); ctx.arc(cx,cy,r,0,Math.PI*2); ctx.fill();
+          ctx.shadowBlur=0;
+          ctx.fillStyle='#2d004d';
+          ctx.beginPath(); ctx.moveTo(cx-r*0.35,cy-r*0.5); ctx.lineTo(cx-r*0.7,cy-r*1.6); ctx.lineTo(cx-r*0.1,cy-r*0.5); ctx.fill();
+          ctx.beginPath(); ctx.moveTo(cx+r*0.35,cy-r*0.5); ctx.lineTo(cx+r*0.7,cy-r*1.6); ctx.lineTo(cx+r*0.1,cy-r*0.5); ctx.fill();
+          ctx.fillStyle='red'; ctx.beginPath(); ctx.arc(cx-3,cy-2,2,0,Math.PI*2); ctx.fill();
+          ctx.beginPath(); ctx.arc(cx+3,cy-2,2,0,Math.PI*2); ctx.fill();
+        });
+      }
+      function drawParticles() {
+        particles.forEach(p=>{
+          ctx.globalAlpha=p.life; ctx.fillStyle=p.color; ctx.shadowBlur=6; ctx.shadowColor=p.color;
+          ctx.beginPath(); ctx.arc(p.x,p.y,p.size,0,Math.PI*2); ctx.fill();
+        });
+        ctx.globalAlpha=1; ctx.shadowBlur=0;
+      }
+
+      // 摇杆控制
+      function getJoystickCenter() {
+        const rect = joystickEl.getBoundingClientRect();
+        return { x: rect.left+rect.width/2, y: rect.top+rect.height/2, r: rect.width/2 };
+      }
+      function updateJoystick(clientX, clientY) {
+        const {x,y,r} = getJoystickCenter();
+        let dxj = clientX-x, dyj = clientY-y;
+        const dist = Math.sqrt(dxj*dxj+dyj*dyj);
+        const max = r*0.7;
+        if (dist > max) { dxj = (dxj/dist)*max; dyj = (dyj/dist)*max; }
+        joystickThumb.style.transform = `translate(calc(-50% + ${dxj}px), calc(-50% + ${dyj}px))`;
+        joystickDir.x = dxj/max; joystickDir.y = dyj/max;
+        if (gameRunning && (Math.abs(joystickDir.x) > 0.15 || Math.abs(joystickDir.y) > 0.15)) {
+          if (Math.abs(joystickDir.x) >= Math.abs(joystickDir.y)) {
+            const newDx = joystickDir.x > 0 ? 1 : -1;
+            if (newDx !== -dx) { dx = newDx; dy = 0; }
+          } else {
+            const newDy = joystickDir.y > 0 ? 1 : -1;
+            if (newDy !== -dy) { dx = 0; dy = newDy; }
+          }
+        }
+      }
+      function resetJoystick() {
+        joystickThumb.style.transform = 'translate(-50%, -50%)';
+        joystickDir.x=0; joystickDir.y=0; joystickActive=false;
+        joystickEl.classList.remove('active');
+      }
+
+      // 摇杆事件
+      joystickEl.addEventListener('touchstart', e=> { e.preventDefault(); joystickActive=true; joystickEl.classList.add('active'); updateJoystick(e.touches[0].clientX, e.touches[0].clientY); }, {passive:false});
+      joystickEl.addEventListener('touchmove', e=> { e.preventDefault(); if(joystickActive) updateJoystick(e.touches[0].clientX, e.touches[0].clientY); }, {passive:false});
+      joystickEl.addEventListener('touchend', e=> { e.preventDefault(); resetJoystick(); });
+      joystickEl.addEventListener('touchcancel', ()=> resetJoystick());
+      joystickEl.addEventListener('mousedown', e=> { e.preventDefault(); joystickActive=true; joystickEl.classList.add('active'); updateJoystick(e.clientX, e.clientY); });
+      window.addEventListener('mousemove', e=> { if(joystickActive) updateJoystick(e.clientX, e.clientY); });
+      window.addEventListener('mouseup', ()=> { if(joystickActive) resetJoystick(); });
+
+      // 键盘控制
+      document.addEventListener('keydown', e => {
+        if (!gameRunning) return;
+        const key = e.code;
+        e.preventDefault();
+        if (key === 'ArrowUp' || key === 'KeyW') { if (dy !== 1) { dx = 0; dy = -1; } }
+        else if (key === 'ArrowDown' || key === 'KeyS') { if (dy !== -1) { dx = 0; dy = 1; } }
+        else if (key === 'ArrowLeft' || key === 'KeyA') { if (dx !== 1) { dx = -1; dy = 0; } }
+        else if (key === 'ArrowRight' || key === 'KeyD') { if (dx !== -1) { dx = 1; dy = 0; } }
+      });
+
+      // 按钮事件
+      btnStart.addEventListener('click', ()=>{
+        ensureAudio();
+        if (gameRunning) return;
+        fullReset(); gameRunning = true; updateUI();
+        lastSnakeMove = lastMonsterMove = lastAiMove = performance.now();
+        btnStart.textContent = '▶ 继续';
+      });
+      btnRestart.addEventListener('click', ()=>{
+        gameRunning = false; fullReset(); updateUI(); drawAll();
+        btnStart.textContent = '▶ 开始'; resetJoystick();
+      });
+
+      btnInvincible.addEventListener('click', () => {
+        invincible = !invincible;
+        updatePowerButtons();
+        ensureAudio();
+        playSound(invincible ? 880 : 440, 'sine', 0.1, 0.15);
+      });
+
+      btnSpeed.addEventListener('click', () => {
+        speedBoost = !speedBoost;
+        updatePowerButtons();
+        ensureAudio();
+        playSound(speedBoost ? 660 : 330, 'triangle', 0.1, 0.15);
+      });
+
+      document.querySelectorAll('button').forEach(b=> b.addEventListener('touchstart', e=> { e.preventDefault(); b.click(); }));
+
+      // 游戏循环
+      function loop(ts) {
+        if (!lastSnakeMove) lastSnakeMove = ts;
+        if (!lastMonsterMove) lastMonsterMove = ts;
+        if (!lastAiMove) lastAiMove = ts;
+        if (gameRunning) {
+          const currentSpeed = speedBoost ? BOOST_SPEED : BASE_SPEED;
+          if (ts - lastSnakeMove >= currentSpeed) { moveSnake(); lastSnakeMove = ts; }
+          if (ts - lastAiMove >= AI_SPEED) { moveAI(0); moveAI(1); lastAiMove = ts; }
+          if (ts - lastMonsterMove >= MONSTER_MOVE) { moveMonsters(); lastMonsterMove = ts; }
+          updateParticles();
+        }
+        drawAll();
+        gameLoopId = requestAnimationFrame(loop);
+      }
+
+      function moveMonsters() {
+        if (!gameRunning) return;
+        const occupied = new Set([...snake.map(s=>`${s.x},${s.y}`)]);
+        aiSnakes.forEach(ai=> ai.alive && ai.body.forEach(s=> occupied.add(`${s.x},${s.y}`)));
+        monsters.forEach(m=>{
+          const dirs = [{x:1,y:0},{x:-1,y:0},{x:0,y:1},{x:0,y:-1}];
+          for (let i=dirs.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [dirs[i],dirs[j]]=[dirs[j],dirs[i]]; }
+          for (const d of dirs) {
+            let nx = wrap(m.x + d.x);
+            let ny = wrap(m.y + d.y);
+            if (!occupied.has(`${nx},${ny}`)) { m.x=nx; m.y=ny; break; }
+          }
+        });
+      }
+
+      fullReset(); drawAll(); gameLoopId = requestAnimationFrame(loop);
+      window.addEventListener('beforeunload', ()=>{ cancelAnimationFrame(gameLoopId); });
+    })();
+  </script>
+</body>
+</html>
