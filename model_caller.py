@@ -59,7 +59,7 @@ def call_kimi(prompt):
     headers = APIConfig.get_kimi_headers()
     
     payload = {
-        "model": "moonshot-v1-8k",
+        "model": "kimi-k2.6",
         "messages": [
             {
                 "role": "user",
@@ -85,7 +85,7 @@ def list_available_models():
     if APIConfig.is_doubao_available():
         models.append("✅ 豆包 (doubao-seed-2-0-pro)")
     if APIConfig.is_kimi_available():
-        models.append("✅ Kimi (moonshot-v1-8k)")
+        models.append("✅ Kimi (kimi-k2.6)")
     
     if not models:
         return "❌ 没有可用的模型"

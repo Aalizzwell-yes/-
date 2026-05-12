@@ -14,7 +14,7 @@ def call_kimi(prompt):
     }
 
     payload = {
-        "model": "moonshot-v1-8k",
+        "model": "kimi-k2.6",
         "messages": [
             {
                 "role": "user",
