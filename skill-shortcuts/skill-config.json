@@ -1,6 +1,7 @@
 {
   "favorites": [
-    "doubao-model"
+    "doubao-model",
+    "browser"
   ],
   "autoShowOnAt": true,
   "searchFuzzy": true
