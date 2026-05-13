@@ -1,0 +1,138 @@
+{
+  "name": "skill-shortcuts",
+  "version": "1.0.0",
+  "title": "技能快捷指令",
+  "description": "为所有的 skills 创建调用快捷指令，当打出 @ 的时候自动弹出所有 skills 供你选择调用",
+  "author": "汤圆",
+  "category": "工具",
+  "icon": "⚡",
+  "keywords": ["快捷指令", "skill", "自动补全", "快捷键", "效率"],
+  
+  "config": {
+    "favorites": [],
+    "autoShowOnAt": true,
+    "searchFuzzy": true
+  },
+  
+  "triggers": [
+    {
+      "type": "command",
+      "pattern": "@",
+      "description": "显示所有技能快捷菜单"
+    },
+    {
+      "type": "command",
+      "pattern": "@?",
+      "description": "显示技能帮助"
+    },
+    {
+      "type": "command",
+      "pattern": "@list",
+      "description": "列出所有技能"
+    },
+    {
+      "type": "command",
+      "pattern": "@search *",
+      "description": "搜索技能"
+    },
+    {
+      "type": "command",
+      "pattern": "@favorite *",
+      "description": "收藏技能"
+    },
+    {
+      "type": "command",
+      "pattern": "@favorites",
+      "description": "显示收藏的技能"
+    },
+    {
+      "type": "command",
+      "pattern": "@*",
+      "description": "快速调用指定技能"
+    }
+  ],
+  
+  "actions": [
+    {
+      "id": "list_skills",
+      "name": "列出技能",
+      "description": "列出所有已安装的技能",
+      "parameters": [],
+      "output": {
+        "type": "string",
+        "description": "技能列表"
+      }
+    },
+    {
+      "id": "search_skills",
+      "name": "搜索技能",
+      "description": "根据关键词搜索技能",
+      "parameters": [
+        {
+          "name": "keyword",
+          "type": "string",
+          "required": true,
+          "description": "搜索关键词"
+        }
+      ],
+      "output": {
+        "type": "string",
+        "description": "搜索结果"
+      }
+    },
+    {
+      "id": "favorite_skill",
+      "name": "收藏技能",
+      "description": "将技能添加到收藏夹",
+      "parameters": [
+        {
+          "name": "skill_name",
+          "type": "string",
+          "required": true,
+          "description": "技能名称"
+        }
+      ],
+      "output": {
+        "type": "string",
+        "description": "操作结果"
+      }
+    },
+    {
+      "id": "show_favorites",
+      "name": "显示收藏",
+      "description": "显示所有收藏的技能",
+      "parameters": [],
+      "output": {
+        "type": "string",
+        "description": "收藏列表"
+      }
+    }
+  ],
+  
+  "requirements": {
+    "python": ">=3.8"
+  },
+  
+  "runtime": {
+    "type": "python",
+    "entrypoint": "skill_shortcuts.py",
+    "memory": 128,
+    "timeout": 30
+  },
+  
+  "examples": [
+    "@ 显示所有技能",
+    "@? 显示帮助",
+    "@list 列出技能",
+    "@search 浏览器 搜索技能",
+    "@favorite 豆包 收藏技能",
+    "@favorites 显示收藏",
+    "@豆包 你好 快速调用豆包"
+  ],
+  
+  "metadata": {
+    "created_at": "2026-05-13",
+    "updated_at": "2026-05-13",
+    "supported_platforms": ["trae"]
+  }
+}
