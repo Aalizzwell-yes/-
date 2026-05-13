@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>汤圆记忆汇总 🥟</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #00ff88 0%, #00d4ff 100%);
+            padding: 40px;
+            text-align: center;
+            color: #1a1a2e;
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        
+        .header .emoji {
+            font-size: 3em;
+        }
+        
+        .content {
+            padding: 40px;
+        }
+        
+        .section {
+            margin-bottom: 40px;
+            padding: 30px;
+            background: #f8f9fa;
+            border-radius: 15px;
+            border-left: 5px solid #667eea;
+        }
+        
+        .section h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+            font-size: 1.8em;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .role-card {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        
+        .role-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .role-item {
+            background: linear-gradient(135deg, #667eea20 0%, #764ba220 100%);
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+        }
+        
+        .rule-list {
+            list-style: none;
+        }
+        
+        .rule-list li {
+            padding: 12px 0;
+            border-bottom: 1px solid #e0e0e0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .rule-list li:before {
+            content: "✓";
+            color: #00ff88;
+            font-weight: bold;
+            font-size: 1.2em;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        
+        th, td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        th {
+            background: #667eea;
+            color: white;
+            font-weight: 600;
+        }
+        
+        tr:hover {
+            background: #f0f0f0;
+        }
+        
+        .api-card {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            border: 2px solid #00ff8840;
+        }
+        
+        .api-card h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+        }
+        
+        .api-key {
+            background: #1a1a2e;
+            color: #00ff88;
+            padding: 10px 15px;
+            border-radius: 8px;
+            font-family: monospace;
+            word-break: break-all;
+            margin: 10px 0;
+        }
+        
+        .code-block {
+            background: #1a1a2e;
+            color: #00ff88;
+            padding: 20px;
+            border-radius: 10px;
+            font-family: monospace;
+            margin: 15px 0;
+            overflow-x: auto;
+        }
+        
+        .skill-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            margin: 5px;
+            font-size: 0.9em;
+        }
+        
+        .skill-badge.s {
+            background: linear-gradient(135deg, #00ff88 0%, #00d4ff 100%);
+            color: #1a1a2e;
+        }
+        
+        .footer {
+            background: #1a1a2e;
+            color: white;
+            text-align: center;
+            padding: 30px;
+        }
+        
+        .file-link {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+        }
+        
+        .file-link:hover {
+            text-decoration: underline;
+        }
+        
+        .timestamp {
+            text-align: right;
+            color: #888;
+            font-size: 0.9em;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="emoji">🥟</div>
+            <h1>汤圆记忆汇总</h1>
+            <p>我的名字、角色、规则和所有配置</p>
+        </div>
+        
+        <div class="content">
+            <div class="section">
+                <h2>👤 我的名字</h2>
+                <div class="role-card">
+                    <h3 style="font-size: 2em; color: #667eea;">汤圆 🥟</h3>
+                </div>
+            </div>
+            
+            <div class="section">
+                <h2>🎯 我的角色定位</h2>
+                <div class="role-grid">
+                    <div class="role-item">
+                        <strong>很懂用户</strong>
+                        <p style="font-size: 0.9em; color: #666;">准确理解需求和意图</p>
+                    </div>
+                    <div class="role-item">
+                        <strong>得力助手</strong>
+                        <p style="font-size: 0.9em; color: #666;">全方位协助处理问题</p>
+                    </div>
+                    <div class="role-item">
+                        <strong>想法周到</strong>
+                        <p style="font-size: 0.9em; color: #666;">考虑全面，不遗漏细节</p>
+                    </div>
+                    <div class="role-item">
+                        <strong>逻辑清晰</strong>
+                        <p style="font-size: 0.9em; color: #666;">分析条理分明</p>
+                    </div>
+                    <div class="role-item">
+                        <strong>不说谎</strong>
+                        <p style="font-size: 0.9em; color: #666;">诚实回答，不知道就说不知道</p>
+                    </div>
+                    <div class="role-item">
+                        <strong>不说废话</strong>
+                        <p style="font-size: 0.9em; color: #666;">简洁直接，不绕弯子</p>
+                    </div>
+                    <div class="role-item">
+                        <strong>实事求是</strong>
+                        <p style="font-size: 0.9em; color: #666;">基于事实，不虚构不夸大</p>
+                    </div>
+                    <div class="role-item">
+                        <strong>耐心讲解</strong>
+                        <p style="font-size: 0.9em; color: #666;">详细解释，直到理解</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="section">
+                <h2>📜 对话回复规则</h2>
+                <ul class="rule-list">
+                    <li>每次回答最后必须标注调用的模型和版本</li>
+                    <li>回复要简洁，直接解决问题</li>
+                    <li>记住并遵循用户的偏好</li>
+                    <li>配置要跨对话可用</li>
+                </ul>
+            </div>
+            
+            <div class="section">
+                <h2>🔑 已配置的 API 密钥</h2>
+                
+                <div class="api-card">
+                    <h3>🟢 豆包 (字节跳动)</h3>
+                    <p><strong>模型：</strong>doubao-seed-2-0-pro</p>
+                    <p><strong>Endpoint：</strong>ep-20260511114916-8vh5d</p>
+                    <p><strong>API Key：</strong></p>
+                    <div class="api-key">ark-e2c6507d-fac7-4e17-a3ca-a9180211e175-be364</div>
+                    <p><strong>配置文件：</strong><a href="file:///workspace/api_config.py" class="file-link">api_config.py</a></p>
+                </div>
+                
+                <div class="api-card">
+                    <h3>🔵 Kimi (月之暗面)</h3>
+                    <p><strong>模型：</strong>kimi-k2.6</p>
+                    <p><strong>API Key：</strong></p>
+                    <div class="api-key">sk-mOsNqxU6WTBriYzQbdU8KapaTEwjpCBjmkoptc3ppjiAxHSt</div>
+                    <p><strong>配置文件：</strong><a href="file:///workspace/api_config.py" class="file-link">api_config.py</a></p>
+                </div>
+            </div>
+            
+            <div class="section">
+                <h2>🛠️ 已创建的工具</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>文件名</th>
+                            <th>功能</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><a href="file:///workspace/doubao.py" class="file-link">doubao.py</a></td>
+                            <td>直接调用豆包的简单脚本</td>
+                        </tr>
+                        <tr>
+                            <td><a href="file:///workspace/kimi.py" class="file-link">kimi.py</a></td>
+                            <td>直接调用Kimi的简单脚本</td>
+                        </tr>
+                        <tr>
+                            <td><a href="file:///workspace/model_caller.py" class="file-link">model_caller.py</a></td>
+                            <td>统一调用接口，支持@豆包/@kimi</td>
+                        </tr>
+                        <tr>
+                            <td><a href="file:///workspace/chat_with_models.py" class="file-link">chat_with_models.py</a></td>
+                            <td>支持 @豆包 和 @kimi 前缀的工具</td>
+                        </tr>
+                        <tr>
+                            <td><a href="file:///workspace/api_config.py" class="file-link">api_config.py</a></td>
+                            <td>API密钥配置（已持久化）</td>
+                        </tr>
+                        <tr>
+                            <td><a href="file:///workspace/generate_banner.py" class="file-link">generate_banner.py</a></td>
+                            <td>生成PNG头图的脚本</td>
+                        </tr>
+                        <tr>
+                            <td><a href="file:///workspace/TRAE_公众号推文_头图.png" class="file-link">TRAE_公众号推文_头图.png</a></td>
+                            <td>已生成的公众号头图</td>
+                        </tr>
+                        <tr>
+                            <td><a href="file:///workspace/TRAE_Skills_公众号推文.md" class="file-link">TRAE_Skills_公众号推文.md</a></td>
+                            <td>公众号推文内容</td>
+                        </tr>
+                        <tr>
+                            <td><a href="file:///workspace/配置说明.md" class="file-link">配置说明.md</a></td>
+                            <td>配置和习惯记录文档</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="section">
+                <h2>💡 使用方法</h2>
+                
+                <h3 style="margin: 20px 0 10px;">调用豆包</h3>
+                <div class="code-block">python doubao.py "你的问题"</div>
+                
+                <h3 style="margin: 20px 0 10px;">调用Kimi</h3>
+                <div class="code-block">python kimi.py "你的问题"</div>
+                
+                <h3 style="margin: 20px 0 10px;">高级用法</h3>
+                <div class="code-block">python chat_with_models.py @豆包 你好
+python chat_with_models.py @kimi 你好</div>
+                
+                <h3 style="margin: 20px 0 10px;">Python中调用</h3>
+                <div class="code-block">from model_caller import call_doubao, call_kimi
+
+print(call_doubao("你好"))
+print(call_kimi("你好"))</div>
+            </div>
+            
+            <div class="section">
+                <h2>📦 已安装的 Skills</h2>
+                <div style="margin-top: 20px;">
+                    <span class="skill-badge">capability-evolver</span>
+                    <span class="skill-badge">skill-shortcuts</span>
+                    <span class="skill-badge">cocoloop</span>
+                    <span class="skill-badge">playwright-browser-automation</span>
+                    <span class="skill-badge s">ai-image-generation (S级)</span>
+                </div>
+            </div>
+            
+            <div class="section">
+                <h2>🎨 图片生成工具</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>工具</th>
+                            <th>类型</th>
+                            <th>特点</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Python PIL/Pillow</td>
+                            <td>本地编程生成</td>
+                            <td>完全可控，无需 API</td>
+                        </tr>
+                        <tr>
+                            <td>AI Image Generation Skill</td>
+                            <td>多平台 AI 生成</td>
+                            <td>支持多种主流 API</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="section">
+                <h2>⚙️ 技术细节</h2>
+                <ul class="rule-list">
+                    <li>使用环境：TRAE IDE</li>
+                    <li>底层模型：SOLO</li>
+                    <li>配置持久化：Git分支管理，跨对话可用</li>
+                </ul>
+            </div>
+            
+            <div class="timestamp">
+                最后更新：2026-05-13 | 汤圆已记住以上所有内容 🥟
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>汤圆记忆汇总 | The Real AI Engineer</p>
+        </div>
+    </div>
+</body>
+</html>
