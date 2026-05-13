@@ -1,0 +1,264 @@
+
+&lt;!DOCTYPE html&gt;
+&lt;html lang="zh-CN"&gt;
+&lt;head&gt;
+    &lt;meta charset="UTF-8"&gt;
+    &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;
+    &lt;title&gt;TRAE 公众号推文头图&lt;/title&gt;
+    &lt;style&gt;
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
+            background: linear-gradient(135deg, #f0f4ff 0%, #e8f5e9 50%, #f0f4ff 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        .banner {
+            width: 100%;
+            max-width: 800px;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            border-radius: 24px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.4);
+            overflow: hidden;
+            position: relative;
+        }
+        .banner::before {
+            content: "";
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(0, 255, 136, 0.1) 0%, transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+        .banner::after {
+            content: "";
+            position: absolute;
+            bottom: -30%;
+            left: -10%;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(0, 212, 255, 0.08) 0%, transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+        .banner-inner {
+            position: relative;
+            padding: 80px 60px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 40px;
+        }
+        .header {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        .pixel-pal {
+            width: 80px;
+            height: 80px;
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            grid-template-rows: repeat(5, 1fr);
+            gap: 2px;
+            filter: drop-shadow(0 0 20px rgba(0, 255, 136, 0.4));
+        }
+        .pixel {
+            border-radius: 3px;
+            background: transparent;
+        }
+        .pixel.on {
+            background: linear-gradient(135deg, #00ff88 0%, #00ffc8 100%);
+            box-shadow: 0 0 10px rgba(0, 255, 136, 0.5);
+        }
+        .title-section {
+            text-align: center;
+            z-index: 1;
+        }
+        .main-title {
+            font-size: 48px;
+            font-weight: 800;
+            color: #ffffff;
+            letter-spacing: 2px;
+            margin-bottom: 12px;
+            text-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+        .main-title span {
+            color: #00ff88;
+        }
+        .sub-title {
+            font-size: 24px;
+            font-weight: 600;
+            color: #b8c5d6;
+            letter-spacing: 4px;
+        }
+        .skills-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            width: 100%;
+            z-index: 1;
+        }
+        .skill-card {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 20px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+        .skill-card:hover {
+            background: rgba(255, 255, 255, 0.12);
+            transform: translateY(-4px);
+            box-shadow: 0 10px 30px rgba(0, 255, 136, 0.15);
+            border-color: rgba(0, 255, 136, 0.3);
+        }
+        .skill-icon {
+            font-size: 36px;
+            margin-bottom: 12px;
+        }
+        .skill-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: #ffffff;
+        }
+        .footer {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            width: 100%;
+            justify-content: center;
+            z-index: 1;
+        }
+        .logo-text {
+            font-size: 20px;
+            font-weight: 800;
+            color: #00ff88;
+            letter-spacing: 4px;
+        }
+        .tagline {
+            font-size: 14px;
+            color: #8895a8;
+        }
+        .divider {
+            width: 2px;
+            height: 24px;
+            background: rgba(255, 255, 255, 0.2);
+        }
+        @media (max-width: 768px) {
+            .banner-inner {
+                padding: 50px 30px;
+            }
+            .main-title {
+                font-size: 32px;
+            }
+            .sub-title {
+                font-size: 18px;
+            }
+            .skills-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 15px;
+            }
+        }
+    &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;div class="banner"&gt;
+        &lt;div class="banner-inner"&gt;
+            &lt;div class="header"&gt;
+                &lt;div class="pixel-pal" id="pixelPal"&gt;&lt;/div&gt;
+                &lt;div style="color: #00ff88; font-size: 28px; font-weight: 800;"&gt;TRAE&lt;/div&gt;
+            &lt;/div&gt;
+            
+            &lt;div class="title-section"&gt;
+                &lt;h1 class="main-title"&gt;&lt;span&gt;开发者必备&lt;/span&gt;：10大顶级技能&lt;/h1&gt;
+                &lt;p class="sub-title"&gt;让你的开发效率翻倍！&lt;/p&gt;
+            &lt;/div&gt;
+            
+            &lt;div class="skills-grid"&gt;
+                &lt;div class="skill-card"&gt;
+                    &lt;div class="skill-icon"&gt;🎨&lt;/div&gt;
+                    &lt;div class="skill-name"&gt;前端设计&lt;/div&gt;
+                &lt;/div&gt;
+                &lt;div class="skill-card"&gt;
+                    &lt;div class="skill-icon"&gt;📦&lt;/div&gt;
+                    &lt;div class="skill-name"&gt;缓存优化&lt;/div&gt;
+                &lt;/div&gt;
+                &lt;div class="skill-card"&gt;
+                    &lt;div class="skill-icon"&gt;🌐&lt;/div&gt;
+                    &lt;div class="skill-name"&gt;全栈开发&lt;/div&gt;
+                &lt;/div&gt;
+                &lt;div class="skill-card"&gt;
+                    &lt;div class="skill-icon"&gt;👀&lt;/div&gt;
+                    &lt;div class="skill-name"&gt;代码审查&lt;/div&gt;
+                &lt;/div&gt;
+                &lt;div class="skill-card"&gt;
+                    &lt;div class="skill-icon"&gt;🔍&lt;/div&gt;
+                    &lt;div class="skill-name"&gt;通用审查&lt;/div&gt;
+                &lt;/div&gt;
+                &lt;div class="skill-card"&gt;
+                    &lt;div class="skill-icon"&gt;🧪&lt;/div&gt;
+                    &lt;div class="skill-name"&gt;Web测试&lt;/div&gt;
+                &lt;/div&gt;
+                &lt;div class="skill-card"&gt;
+                    &lt;div class="skill-icon"&gt;🚀&lt;/div&gt;
+                    &lt;div class="skill-name"&gt;CI/CD&lt;/div&gt;
+                &lt;/div&gt;
+                &lt;div class="skill-card"&gt;
+                    &lt;div class="skill-icon"&gt;🔧&lt;/div&gt;
+                    &lt;div class="skill-name"&gt;代码修复&lt;/div&gt;
+                &lt;/div&gt;
+            &lt;/div&gt;
+            
+            &lt;div class="footer"&gt;
+                &lt;div class="logo-text"&gt;TRAE&lt;/div&gt;
+                &lt;div class="divider"&gt;&lt;/div&gt;
+                &lt;div class="tagline"&gt;The Real AI Engineer&lt;/div&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
+
+    &lt;script&gt;
+        // Generate Pixel Pal robot
+        const pixelPal = document.getElementById('pixelPal');
+        // Pixel pattern: 0 = off, 1 = on
+        const pattern = [
+            0, 1, 1, 1, 1, 1, 0,
+            1, 0, 1, 0, 1, 0, 1,
+            1, 0, 0, 0, 0, 0, 1,
+            0, 1, 0, 0, 0, 1, 0,
+            0, 0, 1, 1, 1, 0, 0
+        ];
+        
+        pattern.forEach(on =&gt; {
+            const pixel = document.createElement('div');
+            pixel.className = 'pixel' + (on ? ' on' : '');
+            pixelPal.appendChild(pixel);
+        });
+
+        // Add subtle animation to skills
+        const skillCards = document.querySelectorAll('.skill-card');
+        skillCards.forEach((card, index) =&gt; {
+            card.style.animationDelay = `${index * 0.1}s`;
+            card.style.opacity = '0';
+            setTimeout(() =&gt; {
+                card.style.transition = 'all 0.5s ease';
+                card.style.opacity = '1';
+            }, index * 100);
+        });
+    &lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;
